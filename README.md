@@ -24,6 +24,9 @@ VM起動＆接続
 ./gcould.sh start
 ./gcould.sh ssh
 
+# ssh connect to chrome desktop
+# https://remotedesktop.google.com/access
+
 # 起動中は課金されるので、使わない時は停止
 ./gcould.sh stop
 ```
