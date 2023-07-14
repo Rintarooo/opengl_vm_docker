@@ -1,15 +1,8 @@
 #!/bin/bash
-
-# docker-compose のアプデ
-
-# （Deep Leanring VMに入ってるdocker-composeのバージョンが1.25.0と古いため）
-
 # install
-# sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install docker-compose -y
-
+sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install docker-compose -y
 # https://heppoko-room.net/archives/1892
 VER=v2.20.0
-
 docker-compose -v
 echo "install ${VER}"
 sudo rm -rf /usr/bin/docker-compose

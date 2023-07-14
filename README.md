@@ -1,6 +1,7 @@
 # GCP VM+Docker+OpenGL+CMake
 
 GCP VM on GCE(+Chrome Remote Desktop)+Docker(docker-compose, nvidia-docker)+OpenGL+CMake
+<img src="https://github.com/Rintarooo/VRP_DRL_MHA/assets/51239551/c8e2484b-da02-4f95-9812-16ad8c2c7f0e" width="500px">
 
 ## Usage
 
@@ -23,14 +24,14 @@ VM起動＆接続
 ./gcould.sh start
 ./gcould.sh ssh
 
-# 起動中は課金されるので停止
+# 起動中は課金されるので、使わない時は停止
 ./gcould.sh stop
 ```
 
 
 VM初回起動時：docker-compose のインストール＆アプデ
 
-（Deep Leanring VMに入ってるdocker-composeのバージョンが1.25.0と古いため）
+（Deep Leanring VMにデフォルトで入るdocker-composeのバージョンが1.25.0と古いため）
 
 ```bash
 ./update_docker-compose.sh
@@ -79,7 +80,7 @@ non-network local connections being added to access control list
 
 ### 2. Build c++ code and Run
 
-build and run
+コンテナ内で、build and run
 ```bash
 ./build.sh
 ./build/main
