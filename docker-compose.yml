@@ -1,19 +1,24 @@
 version: "2"
 services:
   opengl-tutorial:
-    image: opengl-tutorial
+    image: gl-tuto:latest
     build: 
       context: .
       dockerfile: ./Dockerfiles/Dockerfile
     tty: true
-    volumes:
-      - "~/.Xauthority:/root/.Xauthority"
     environment:
       - CUDA_DEBUGGER_SOFTWARE_PREEMPTION=1
-      - DISPLAY=host.docker.internal:0
+      - DISPLAY=$DISPLAY
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
-    platform: linux/amd64
-    network_mode: host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     # ports:
     #   - "8080:80"
       # DISPLAY: $DISPLAY
