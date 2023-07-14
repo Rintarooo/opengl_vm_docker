@@ -1,7 +1,5 @@
 #!/bin/bash
 
-if [ -f .env ]; then
-source .env
 # Check if the .env file exists
 if [ -f .env ]; then
   # If the .env file exists, source the environment variables from it
@@ -10,7 +8,7 @@ if [ -f .env ]; then
   PROJECT="$PROJECT"
   INSTANCE="$INSTANCE"  
   # Display the contents of the instance variable
-  echo "{$PROJECT} : VM {$INSTANCE}"
+  echo "$PROJECT : VM $INSTANCE"
 else
   echo "The .env file does not exist. you should create .env file"
 fi
