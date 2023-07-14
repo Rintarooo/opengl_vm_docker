@@ -1,42 +1,24 @@
 version: "2"
 services:
   opengl-tutorial:
-    image: opengl-tutorial
+    image: gl-tuto:latest
     build: 
       context: .
       dockerfile: ./Dockerfiles/Dockerfile
     tty: true
-    volumes:
-      - "~/.Xauthority:/root/.Xauthority"
     environment:
+      - DISPLAY=$DISPLAY
       - CUDA_DEBUGGER_SOFTWARE_PREEMPTION=1
-      - DISPLAY=host.docker.internal:0
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
-    platform: linux/amd64
-    network_mode: host
-    # ports:
-    #   - "8080:80"
-      # DISPLAY: $DISPLAY
-     #   USE_S3: false
-      #${HOSTNAME}:0
-      # - DISPLAY=$(hostname):0
-            # - DISPLAY=:0
-      # - DISPLAY=CA-20021965:0
-      # - DISPLAY=$DISPLAY
-
-
-
-    # ports:
-    #   - "8080:80"
-      # from mac port 8080 to 80
-      # - "127.0.0.1:9000:8080"
-    # volumes:
-      # - "./app:/var/www/html"
-      # - "/tmp/.X11-unix:/tmp/.X11-unix"
-
-# https://qiita.com/hoto17296/items/bdb2ab24bc32b6b7f360
-
-
-# $ The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
-# https://zenn.dev/marumarumeruru/articles/55173a98863d4e
-    # platform: linux/amd64
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/app
+    working_dir: /app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

@@ -1,5 +1,5 @@
+// http://kanamori.cs.tsukuba.ac.jp/lecture/old2017/cg_basics/01/01_samples.html
 
-// deform_disp.c   図形の描画　//以下はコメント
 #include <GL/glut.h> // GLUTライブラリを使用
 
 void display(void) // 表示関数
@@ -9,13 +9,6 @@ void display(void) // 表示関数
   glLineWidth( 1.5 );           // 線幅指定(画素単位)
   glPointSize( 6.0 );           // 点の大きさ指定(画素単位)
 
-// 次のglBegin( )の７つのいずれか１つのみを有効にしてみよう
-//  glBegin(GL_POINTS);           // 表示対象(点群)作成
-//  glBegin(GL_LINES);            // 表示対象(線分)作成
-//  glBegin(GL_LINE_STRIP);       // 表示対象(折れ線)作成
-//  glBegin(GL_LINE_LOOP);        // 表示対象(閉じた折れ線)作成
-//  glBegin(GL_TRIANGLE_STRIP);   // 表示対象(三角形の連なり)作成
-//  glBegin(GL_TRIANGLE_FAN);     // 表示対象(1頂点を共有した三角形群)作成
   glBegin(GL_TRIANGLES);        // 表示対象(三角形)作成
      glVertex2d(-0.69, 0.4 );   // ２次元の頂点座標(x,y)
      glVertex2d(-0.69,-0.4 );
