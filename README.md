@@ -1,31 +1,47 @@
 # GCP VM+Docker+OpenGL+CMake
 
-GCP VM on GCE(+Chrome Remote Desktop)+Docker(docker-compose, nvidia-docker)+OpenGL+CMake
+* GCP VM(+Chrome Remote Desktop)
+* Docker(docker-compose, nvidia-docker)
+* OpenGL(+CUDA)
+* CMake
+
 <img src="https://github.com/Rintarooo/VRP_DRL_MHA/assets/51239551/c8e2484b-da02-4f95-9812-16ad8c2c7f0e" width="500px">
 
 ## Usage
 
 ### 0. Set up
 
-VMの設定
+clone repo
+```bash
+git clone https://github.com/Rintarooo/opengl_vm_docker
+cd opengl_vm_docker
+```
+
+
+`.env`ファイルを作成し、GCPのプロジェクト・VMのインスタンス名を入れる
 ```bash
 vim .env
 ```
 
-.env は以下のようにする
+`.env` 
 ```bash
+# GCP project name
 export PROJECT="###"
+# VM instance name
 export INSTANCE="###"
 ```
 
-VM起動＆接続
+VM作成&起動＆接続
 ```bash
-# ./gcould.sh create
+# 作成
+./gcould.sh create
+# 起動
 ./gcould.sh start
+# 接続
 ./gcould.sh ssh
 
 # ssh connect to chrome desktop
-# https://remotedesktop.google.com/access
+https://remotedesktop.google.com/access
 
 # 起動中は課金されるので、使わない時は停止
 ./gcould.sh stop
@@ -44,7 +60,7 @@ VM初回起動時：docker-compose のインストール＆アプデ
 次に、docker imageをビルド
 
 ```bash
-# ビルド
+# VM上でビルド
 docker-compose build
 # docker-compose build --no-cache
 
