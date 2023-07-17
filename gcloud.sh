@@ -24,10 +24,9 @@ IMAGE_FAMILY="pytorch-latest-gpu-ubuntu-2004-py310"
 GPU="type=nvidia-tesla-t4,count=1"
 BOOT_DISK_TYPE="pd-balanced"
 BOOT_DISK_SIZE="100GB"
-# BOOT_DISK_SIZE="150GB"
-# BOOT_DISK_SIZE="50GB"
+# "150GB""50GB"
 
-args=("create" "start" "stop" "ssh" "list" "describe")
+args=("create" "start" "stop" "ssh" "list" "describe" "ip" "ip_del")
 
 # create VM instance on GCE
 if [ "$1" = ${args[0]} ]; then
@@ -66,6 +65,28 @@ elif [ "$1" = ${args[4]} ]; then
 	gcloud compute instances list
 elif [ "$1" = ${args[5]} ]; then
 	gcloud compute instances describe $INSTANCE
+elif [ "$1" = ${args[6]} ]; then
+	# https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address?hl=ja
+	ACCESS_CONFIG_NAME="external-nat"
+	ADDRESS_NAME="static-ip-${INSTANCE}"
+	REGION="asia-northeast1"
+	# 新しい静的外部 IP アドレスを予約する
+	gcloud compute addresses create $ADDRESS_NAME \
+	  --region=$REGION
+	#   --global \
+	#   --ip-version IPV4
+	# Get the external IP address
+	IP_ADDRESS=$(gcloud compute addresses describe $ADDRESS_NAME --region $REGION --project $PROJECT --format="json" | jq -r .address)
+	# IP_ADDRESS=$(gcloud compute addresses describe --global $ADDRESS_NAME --project $PROJECT --format="json" | jq -r .address)
+	echo "Attach static external IP address ${ADDRESS_NAME} (${IP_ADDRESS}) to VM ${INSTANCE} for ssh"
+	gcloud compute instances delete-access-config $INSTANCE \
+	  --access-config-name="${ACCESS_CONFIG_NAME}"
+	gcloud compute instances add-access-config $INSTANCE \
+	  --access-config-name="${ACCESS_CONFIG_NAME}" --address=$IP_ADDRESS
+elif [ "$1" = ${args[7]} ]; then
+	ADDRESS_NAME="static-ip-${INSTANCE}"
+	gcloud compute addresses delete $ADDRESS_NAME
+	# gcloud compute addresses delete $ADDRESS_NAME --global
 elif [ "$1" = "-h" ]; then
   echo "Usage: $0 <arg1>"
   echo "<arg1> should be either one of <${args[@]}>"
