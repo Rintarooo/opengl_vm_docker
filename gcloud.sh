@@ -10,9 +10,13 @@ if [ -f .env ]; then
   # Display the contents of the instance variable
   echo "$PROJECT : VM $INSTANCE"
 else
-  echo "The .env file does not exist. you should create .env file"
+  echo "The .env file does not exist. you should create .env file."
+  echo -e ".env file should be like this\n"
+  echo "export PROJECT=\"###\""
+  echo -e "export INSTANCE=\"###\"\n"
 fi
 
+# VM config
 ZONE="asia-northeast1-a"
 MACHINE_TYPE="n1-standard-2"
 # "n1-standard-4"
@@ -25,6 +29,12 @@ GPU="type=nvidia-tesla-t4,count=1"
 BOOT_DISK_TYPE="pd-balanced"
 BOOT_DISK_SIZE="100GB"
 # "150GB""50GB"
+
+# VM external ip address config
+ACCESS_CONFIG_NAME="external-nat"
+ADDRESS_NAME="static-ip-${INSTANCE}"
+REGION="asia-northeast1"
+
 
 args=("create" "start" "stop" "ssh" "list" "describe" "ip" "ip_del")
 
@@ -67,10 +77,6 @@ elif [ "$1" = ${args[5]} ]; then
 	gcloud compute instances describe $INSTANCE
 elif [ "$1" = ${args[6]} ]; then
 	# https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address?hl=ja
-	ACCESS_CONFIG_NAME="external-nat"
-	ADDRESS_NAME="static-ip-${INSTANCE}"
-	REGION="asia-northeast1"
-	# 新しい静的外部 IP アドレスを予約する
 	gcloud compute addresses create $ADDRESS_NAME \
 	  --region=$REGION
 	#   --global \
@@ -84,16 +90,10 @@ elif [ "$1" = ${args[6]} ]; then
 	gcloud compute instances add-access-config $INSTANCE \
 	  --access-config-name="${ACCESS_CONFIG_NAME}" --address=$IP_ADDRESS
 elif [ "$1" = ${args[7]} ]; then
-	ADDRESS_NAME="static-ip-${INSTANCE}"
 	gcloud compute addresses delete $ADDRESS_NAME
 	# gcloud compute addresses delete $ADDRESS_NAME --global
-elif [ "$1" = "-h" ]; then
-  echo "Usage: $0 <arg1>"
-  echo "<arg1> should be either one of <${args[@]}>"
-  exit 1
 else
-  echo "Usage: $0 <arg1>"
-  echo "<arg1> should be either one of <${args[@]}>"
+  echo -e "Usage: $0 <arg1>\n<arg1> should be either one of \n<${args[@]}>"
   exit 1
 fi
 
