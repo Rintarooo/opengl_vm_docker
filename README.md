@@ -33,19 +33,44 @@ export INSTANCE="###"
 
 VM作成&起動＆接続
 ```bash
-# 作成
+# VM作成
 ./gcould.sh create
-# 起動
+# VM起動
 ./gcould.sh start
-# 接続
+# VMに接続
 ./gcould.sh ssh
 
-# ssh connect to chrome desktop
+# install chrome remote desktop
+./install_remote_desktop.sh
+
+# jump on the following url, ssh connect to chrome remote desktop
 https://remotedesktop.google.com/access
 
-# 起動中は課金されるので、使わない時は停止
+# VM起動中は課金されるので、使わない時は停止
 ./gcould.sh stop
 ```
+
+for VSCode User
+
+VSCodeでSSH接続してVMのファイルを編集する
+
+```bash
+# VM起動毎に外部IPアドレスが変わってしまうので、静的なIPアドレスを作成してVMに割り当てる
+./gcould.sh ip
+
+vim ~/.ssh/config
+```
+
+`~/.ssh/config`
+```bash
+Host ### any name as you like
+   HostName ### externai ip address of VM
+   User ### user name, you can get user name $ echo $USER on your VM
+   IdentityFile ### private key path on your Mac, ~/.ssh/google_compute_engine
+   Port 22
+```
+
+VSCodeで、`command + shift + p`でパレットを開いて、`Remote-SSH: Connect to Host`から`HostName`のVMを選択してssh接続
 
 
 VM初回起動時：docker-compose のインストール＆アプデ
