@@ -98,8 +98,10 @@ else
 fi
 
 # インスタンスへローカルのファイルをコピーする
-# gcloud compute copy-files <local-path> <your-instance-name>:<remote-path> --zone <zone>
+# gcloud compute scp <local-path> <your-instance-name>:<remote-path> --zone <zone>
 
 # インスタンスにあるファイルをローカルにコピーする
-# gcloud compute copy-files <your-instance-name>:<remote-path> <local-path> --zone <zone>
-# gcloud compute scp --recurse $INSTANCE:
+# gcloud compute scp <your-instance-name>:<remote-path> <local-path> --zone <zone>
+
+# ディレクトリをコピーしたい時、--recurseオプション付ける
+# gcloud compute scp --recurse
