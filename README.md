@@ -25,10 +25,8 @@ vim .env_gcp
 
 `.env_gcp`ファイルの中身 
 ```bash
-# GCP project name
 # $ gcloud config listでプロジェクト名確認
 export PROJECT="GCP-project-name"
-# VM instance name
 # $ gcloud compute instances listでインスタンス名確認
 export INSTANCE="VM-instance-name"
 ```
@@ -87,51 +85,15 @@ VM初回起動時：docker-compose のインストール＆アプデ
 次に、docker imageをビルド
 
 ```bash
+# Dockerfileからビルド
 docker-compose -f .devcontainer/docker-compose.yml build opengl-vm
+# Xサーバーのアクセス権限を与える
 xhost local:root
 # コンテナ入る
 docker-compose -f .devcontainer/docker-compose.yml run --rm opengl-vm /bin/bash
-
-# # VM上でビルド
-# docker-compose build
-# # docker-compose build --no-cache
-
-# # VMのremote chrome desktop上でコンテナ起動（-dオプションでバックグランド起動）
-# docker-compose up -d
-
-# # 起動しているか確認
-# docker-compose ps
-
-# # # ログ出し、デバッグ
-# # docker-compose logs -f
-
-# # コンテナ入る
-# # docker-compose exec (service名) (command)
-# docker-compose exec opengl-tutorial /bin/bash
-
 # GUI表示出来るか確認
 xeyes
-
-# # コンテナ停止
-# docker-compose down
 ```
-
-コンテナ内でxeyesコマンドを実行したときに以下のエラーが出る場合
-```bash
-root@docker-desktop:/opt# xeyes
-No protocol specified
-Error: Can't open display: :20.0
-```
-
-Xサーバーの権限を与える
-```bash
-$ xhost +localhost
-localhost being added to access control list
-
-$ xhost + local:
-non-network local connections being added to access control list
-```
-
 
 ### 2. Build c++ code and Run
 

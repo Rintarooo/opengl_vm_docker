@@ -3,7 +3,7 @@ services:
   opengl-vm:
     image: opengl-vm:latest
     build: 
-      context: ../../..
+      context: ..
       dockerfile: ./.devcontainer/Dockerfiles/Dockerfile
     tty: true
     environment:
@@ -13,7 +13,7 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - .:/app
+      - ..:/app
     working_dir: /app
     deploy:
       resources:
