@@ -18,16 +18,18 @@ cd opengl_vm_docker/
 ```
 
 
-`.env`ファイルを作成し、GCPのプロジェクト・VMのインスタンス名を入れる
+`.env_gcp`ファイルを作成し、GCPのプロジェクト・VMのインスタンス名を入れる
 ```bash
-vim .env
+vim .env_gcp
 ```
 
-`.env`ファイルの中身 
+`.env_gcp`ファイルの中身 
 ```bash
 # GCP project name
+# $ gcloud config listでプロジェクト名確認
 export PROJECT="GCP-project-name"
 # VM instance name
+# $ gcloud compute instances listでインスタンス名確認
 export INSTANCE="VM-instance-name"
 ```
 
@@ -85,7 +87,6 @@ VM初回起動時：docker-compose のインストール＆アプデ
 次に、docker imageをビルド
 
 ```bash
-
 docker-compose -f .devcontainer/docker-compose.yml build opengl-vm
 xhost local:root
 # コンテナ入る

@@ -1,4 +1,4 @@
 /.vscode/
 /build/
-/.env
+/.env_gcp
 /gcloud_cmd.sh

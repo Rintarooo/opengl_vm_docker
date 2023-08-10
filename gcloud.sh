@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Check if the .env file exists
-if [ -f .env ]; then
-  # If the .env file exists, source the environment variables from it
-  source .env
-  # Assign the environment variables from .env to the instance variable
+# Check if the .env_gcp file exists
+if [ -f .env_gcp ]; then
+  # If the .env_gcp file exists, source the environment variables from it
+  source .env_gcp
+  # Assign the environment variables from .env_gcp to the instance variable
   PROJECT="$PROJECT"
   INSTANCE="$INSTANCE"  
   # Display the contents of the instance variable
   echo "$PROJECT : VM $INSTANCE"
 else
-  echo "The .env file does not exist. you should create .env file."
-  echo -e ".env file should be like this\n"
+  echo "The .env_gcp file does not exist. you should create .env_gcp file."
+  echo -e ".env_gcp file should be like this\n"
   echo "export PROJECT=\"###\""
   echo -e "export INSTANCE=\"###\"\n"
 fi
