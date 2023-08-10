@@ -1,10 +1,10 @@
 version: "2"
 services:
-  opengl-tutorial:
-    image: gl-tuto:latest
+  opengl-vm:
+    image: opengl-vm:latest
     build: 
-      context: .
-      dockerfile: ./Dockerfiles/Dockerfile
+      context: ../../..
+      dockerfile: ./.devcontainer/Dockerfiles/Dockerfile
     tty: true
     environment:
       - DISPLAY=$DISPLAY

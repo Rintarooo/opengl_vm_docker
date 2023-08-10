@@ -2,11 +2,8 @@
 FROM nvidia/cudagl:10.1-devel-ubuntu18.04
 
 # set environment variable
-ENV DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND noninteractive
 ENV WORK_DIR /app
-
-# Create a working directory
-RUN mkdir ${WORK_DIR}
 WORKDIR ${WORK_DIR}
 
 # GPG error: https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64  InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY A4B469963BF863CC
@@ -14,8 +11,8 @@ WORKDIR ${WORK_DIR}
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
 
 # Build tools + debugger
-RUN apt update && \
-    apt install -y \
+RUN apt -y update --no-install-recommends \
+    && apt install -y --no-install-recommends \
     sudo \
     tzdata \
     git \
@@ -28,11 +25,7 @@ RUN apt update && \
     gdb \
     gnuplot \
     nvidia-cuda-gdb \
-    x11-apps
-
-
-# Media I/O:
-RUN sudo apt install -y \
+    x11-apps \
     zlib1g-dev \
     libjpeg-dev \
     libwebp-dev \
@@ -40,11 +33,16 @@ RUN sudo apt install -y \
     libtiff5-dev \
     libopenexr-dev \
     libgdal-dev \
-    libgtk2.0-dev
+    libgtk2.0-dev \
+    && apt autoremove -y \
+	&& apt clean -y 
 
 # install GLFW, GLEW, GLUT for OpenGL
 # https://grainrigi.hatenablog.com/entry/2017/08/27/144218
-RUN sudo apt install -y \
+RUN apt -y update --no-install-recommends \
+    && apt install -y --no-install-recommends \
     libglew-dev \
     libglfw3-dev \
-    freeglut3-dev
+    freeglut3-dev \
+    && apt autoremove -y \
+	&& apt clean -y 
