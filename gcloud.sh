@@ -80,6 +80,7 @@ elif [ "$1" = "${args[1]}" ]; then
   min_to_seconds=$(($MIN*60))
   # 合計秒数を算出
   total_seconds=$(($minutes_to_seconds + $min_to_seconds))
+  echo "sleep ${total_seconds} secs"
   # 計算した秒数だけ待つ
   sleep $total_seconds
   echo "$2 hour $3 min exceeded from when you start VM ${INSTANCE}"
