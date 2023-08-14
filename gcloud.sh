@@ -40,60 +40,92 @@ args=("create" "start" "stop" "ssh" "list" "describe" "ip" "ip_del")
 
 # create VM instance on GCE
 if [ "$1" = ${args[0]} ]; then
-	echo "Create ${INSTANCE}"
-	gcloud compute --project=$PROJECT instances create $INSTANCE \
-	  --zone=$ZONE \
-	  --machine-type=$MACHINE_TYPE \
-	  --accelerator=$GPU \
-	  --image-project=$IMAGE_PROJECT \
-	  --image-family=$IMAGE_FAMILY \
-	  --metadata="install-nvidia-driver=True" \
-	  --subnet=default \
-	  --maintenance-policy=TERMINATE \
-	  --boot-disk-size=$BOOT_DISK_SIZE \
-	  --boot-disk-type=$BOOT_DISK_TYPE
-	  #  \
-	  # --preemptible
-elif [ "$1" = ${args[1]} ]; then
-  echo "Start ${INSTANCE}"
+    echo "Create ${INSTANCE}"
+    gcloud compute --project=$PROJECT instances create $INSTANCE \
+      --zone=$ZONE \
+      --machine-type=$MACHINE_TYPE \
+      --accelerator=$GPU \
+      --image-project=$IMAGE_PROJECT \
+      --image-family=$IMAGE_FAMILY \
+      --metadata="install-nvidia-driver=True" \
+      --subnet=default \
+      --maintenance-policy=TERMINATE \
+      --boot-disk-size=$BOOT_DISK_SIZE \
+      --boot-disk-type=$BOOT_DISK_TYPE
+      #  \
+      # --preemptible
+elif [ "$1" = "${args[1]}" ]; then
+  start_time=$(date)
+  echo "Start ${INSTANCE} now(${start_time}) and this VM would stop in $2 hour $3 min"
+  if [ $# -ne 3 ]; then
+      echo -e "Error: $0 $1 command exactly 3 arguments are required. You wanna stop VM automatically. \nyou should execute like\n\n$0 $1 <hour> <min>\n\nVM automatically would stop after <hour> <min> time has exceeded."
+      echo -e "\nExample: If you want to stop VM in 1hour 30min, execute like\n\n$0 $1 1 30"
+      exit 1
+  fi
+  if [ "$2" = "0" ] && [ "$3" = "0" ]; then
+      echo -e "Error: $0 $1 $2 $3\nboth $2 and $3 should be avoided, because this will stop immediately."
+      echo -e "\nExample: If you want to stop VM in 1hour 30min, execute like\n$0 $1 1 30"
+      exit 1
+  fi
   gcloud compute instances start $INSTANCE
+  echo "Do not stop this program! VM is running"
+  # 時間と分を定義
+  HOUR=$2
+  MIN=$3
+  # 時間を分に変換
+  hours_to_minutes=$(($HOUR*60))
+  # 分を秒に変換
+  minutes_to_seconds=$(($hours_to_minutes*60))
+  # 分を秒に変換
+  min_to_seconds=$(($MIN*60))
+  # 合計秒数を算出
+  total_seconds=$(($minutes_to_seconds + $min_to_seconds))
+  # 計算した秒数だけ待つ
+  sleep $total_seconds
+  echo "$2 hour $3 min exceeded from when you start VM ${INSTANCE}"
+  echo "Stopping automatically ${INSTANCE}"
+  gcloud compute instances stop $INSTANCE
 elif [ "$1" = ${args[2]} ]; then
   echo "Stopping ${INSTANCE}"
   gcloud compute instances stop $INSTANCE
 elif [ "$1" = ${args[3]} ]; then
-	# https://memo.koya-it.com/cloud_serverless/gcp_gce.html
-	# 22番が開くまで待つ
-	IP=$(gcloud compute instances list | awk '/'${INSTANCE}'/ {print $5}')
-	if nc -w 5 -z $IP 22; then
-	    echo "OK! Open port 22 for ${INSTANCE}"
-	else
-	    echo "5secs exceeds. Maybe VM ${INSTANCE} not started yet?"
-	    exit 1
-	fi
-	gcloud compute ssh $INSTANCE
+    # https://memo.koya-it.com/cloud_serverless/gcp_gce.html
+    # 22番が開くまで待つ
+    IP=$(gcloud compute instances list | awk '/'${INSTANCE}'/ {print $5}')
+    if nc -w 5 -z $IP 22; then
+        echo "OK! Open port 22 for ${INSTANCE}"
+    else
+        echo "5secs exceeds. Maybe VM ${INSTANCE} not started yet?"
+        exit 1
+    fi
+    gcloud compute ssh $INSTANCE
 elif [ "$1" = ${args[4]} ]; then
-	gcloud compute instances list
+    gcloud compute instances list
 elif [ "$1" = ${args[5]} ]; then
-	gcloud compute instances describe $INSTANCE
+    gcloud compute instances describe $INSTANCE
 elif [ "$1" = ${args[6]} ]; then
-	# https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address?hl=ja
-	gcloud compute addresses create $ADDRESS_NAME \
-	  --region=$REGION
-	#   --global \
-	#   --ip-version IPV4
-	# Get the external IP address
-	IP_ADDRESS=$(gcloud compute addresses describe $ADDRESS_NAME --region $REGION --project $PROJECT --format="json" | jq -r .address)
-	# IP_ADDRESS=$(gcloud compute addresses describe --global $ADDRESS_NAME --project $PROJECT --format="json" | jq -r .address)
-	echo "Attach static external IP address ${ADDRESS_NAME} (${IP_ADDRESS}) to VM ${INSTANCE} for ssh"
-	gcloud compute instances delete-access-config $INSTANCE \
-	  --access-config-name="${ACCESS_CONFIG_NAME}"
-	gcloud compute instances add-access-config $INSTANCE \
-	  --access-config-name="${ACCESS_CONFIG_NAME}" --address=$IP_ADDRESS
+    # https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address?hl=ja
+    gcloud compute addresses create $ADDRESS_NAME \
+      --region=$REGION
+    #   --global \
+    #   --ip-version IPV4
+    # Get the external IP address
+    IP_ADDRESS=$(gcloud compute addresses describe $ADDRESS_NAME --region $REGION --project $PROJECT --format="json" | jq -r .address)
+    # IP_ADDRESS=$(gcloud compute addresses describe --global $ADDRESS_NAME --project $PROJECT --format="json" | jq -r .address)
+    echo "Attach static external IP address ${ADDRESS_NAME} (${IP_ADDRESS}) to VM ${INSTANCE} for ssh"
+    gcloud compute instances delete-access-config $INSTANCE \
+      --access-config-name="${ACCESS_CONFIG_NAME}"
+    gcloud compute instances add-access-config $INSTANCE \
+      --access-config-name="${ACCESS_CONFIG_NAME}" --address=$IP_ADDRESS
 elif [ "$1" = ${args[7]} ]; then
-	gcloud compute addresses delete $ADDRESS_NAME
-	# gcloud compute addresses delete $ADDRESS_NAME --global
+    gcloud compute addresses delete $ADDRESS_NAME
+    # gcloud compute addresses delete $ADDRESS_NAME --global
 else
-  echo -e "Usage: $0 <arg1>\n<arg1> should be either one of \n<${args[@]}>"
+  echo -e "Usage: $0 <arg1>\n<arg1> should be either one of the following option\n"
+  for arg in "${args[@]}"
+  do
+    echo -e $0 $arg
+  done
   exit 1
 fi
 
