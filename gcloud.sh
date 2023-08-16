@@ -35,8 +35,11 @@ ACCESS_CONFIG_NAME="external-nat"
 ADDRESS_NAME="static-ip-${INSTANCE}"
 REGION="asia-northeast1"
 
+# schedule for running and stopping VM
+SCHEDULE_NAME="${INSTANCE}-schedule"
 
-args=("create" "start" "stop" "ssh" "list" "describe" "ip" "ip_del")
+
+args=("create" "start" "stop" "ssh" "list" "describe" "ip" "ip_del" "schedule_add" "schedule_del" "schedule_lis")
 
 # create VM instance on GCE
 if [ "$1" = ${args[0]} ]; then
@@ -121,6 +124,30 @@ elif [ "$1" = ${args[6]} ]; then
 elif [ "$1" = ${args[7]} ]; then
     gcloud compute addresses delete $ADDRESS_NAME
     # gcloud compute addresses delete $ADDRESS_NAME --global
+# elif [ "$1" = ${args[8]} ]; then
+#     # https://cloud.google.com/compute/docs/instances/schedule-instance-start-stop?hl=ja
+#     echo "add schedule on VM"
+#     if [ $# -ne 3 ]; then
+#       echo -e "Error: $0 $1 command exactly 3 arguments are required. You wanna add VM automatically stop schedule. \nyou should execute like\n\n$0 $1 <hour> <min>\n\nVM automatically would stop <hour> everyday."
+#       echo -e "\nExample: If you want to stop VM in 23:30 in 24 hours everyday, execute like\n\n$0 $1 23 30"
+#       exit 1
+#     fi
+
+#     gcloud compute resource-policies create instance-schedule $SCHEDULE_NAME \
+#       --description="stop at $2:$3 every day on ${INSTANCE}" \
+#       --vm-stop-schedule="$3 $2 * * *" \
+#       --timezone="Asia/Tokyo"
+#       # "JST"
+#       # cron : min hour day month week # https://www.kagoya.jp/howto/it-glossary/server/cron/
+#     gcloud compute instances add-resource-policies $INSTANCE \
+#       --resource-policies=$SCHEDULE_NAME
+# elif [ "$1" = ${args[9]} ]; then
+#     echo "gcloud compute resource-policies delete ${SCHEDULE_NAME}"
+#     gcloud compute resource-policies delete $SCHEDULE_NAME
+#     gcloud compute resource-policies list
+# elif [ "$1" = ${args[10]} ]; then
+#     echo "gcloud compute resource-policies list"
+#     gcloud compute resource-policies list
 else
   echo -e "Usage: $0 <arg1>\n<arg1> should be either one of the following option\n"
   for arg in "${args[@]}"
